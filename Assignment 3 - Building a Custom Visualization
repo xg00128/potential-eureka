@@ -1,0 +1,60 @@
+# Use the following data for this assignment:
+
+import pandas as pd
+import numpy as np
+
+np.random.seed(12345)
+
+df = pd.DataFrame([np.random.normal(32000,200000,3650), 
+                   np.random.normal(43000,100000,3650), 
+                   np.random.normal(43500,140000,3650), 
+                   np.random.normal(48000,70000,3650)], 
+                  index=[1992,1993,1994,1995])
+
+%matplotlib notebook
+import matplotlib.pyplot as plt
+import math
+import matplotlib.colors as mcol
+import matplotlib.cm as cm
+from pandas import Series,DataFrame
+import pandas as pd
+
+df = df.T
+plt.figure()
+
+
+df_std = df.std()/math.sqrt(len(df))*0.95
+df_mean = df.mean() 
+x = [1992,1993,1994,1995]
+dfdata = DataFrame({'year': x,
+             'mean':df_mean,
+             'std': df_std})
+    
+      
+colorbwr = mcol.LinearSegmentedColormap.from_list("Test",["blue", "white", "red"])
+cpick = cm.ScalarMappable(cmap=colorbwr)
+cpick.set_array([])
+plt.colorbar(cpick,orientation='horizontal')
+
+
+def change_y (y):
+    plt.cla()
+    plt.axhline(y, color='black')
+    
+    plt.xticks(x)
+    plt.title('Harder option')
+    plt.bar(x,df_mean.values, width = 0.5, yerr = df_std, color = 'grey', alpha = 0.5, capsize=5) 
+
+    dfdata['percentages']=(dfdata['mean']+dfdata['std']-y)/(dfdata['std']*2)
+    
+    percentages = []
+    for percentage in dfdata['percentages']:
+        if percentage>1: percentage = 1
+        if percentage<0: percentage = 0
+        percentages.append(percentage)
+    
+    plt.bar(x,df.mean().values, width = 0.5, yerr = df_std, color = cpick.to_rgba(percentages), capsize=5) 
+    
+    return percentages
+
+change_y(41147)

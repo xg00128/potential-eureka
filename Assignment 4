@@ -24,3 +24,18 @@ Discussion:
 
 Code:
 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+%matplotlib notebook
+
+def spaintourism():
+    dfmensual = pd.read_csv('Resultados detallados mensuales.csv',encoding='latin-1', sep = ';')
+    dfanual = pd.read_csv('Número de turistas según país de residencia.csv',encoding='latin-1', sep = ';')
+    df = dfmensual.loc[:, ['País de residencia','Periodo','Total']]
+    df = df.groupby('País de residencia')
+    return df.head()
+    
+spaintourism()
+

@@ -34,8 +34,33 @@ def spaintourism():
     dfmensual = pd.read_csv('Resultados detallados mensuales.csv',encoding='latin-1', sep = ';')
     dfanual = pd.read_csv('Número de turistas según país de residencia.csv',encoding='latin-1', sep = ';')
     df = dfmensual.loc[:, ['País de residencia','Periodo','Total']]
-    df = df.groupby('País de residencia')
-    return df.head()
+    df['Year'] = df['Periodo'].str[0:4]
+    df['Month'] = df['Periodo'].str[5:7]
+
+    df = df.loc[56:,['País de residencia','Total','Year','Month']]
+    df = df.rename(columns={'País de residencia':'Country'})
+    df = df[df['Total'] != '.']
+    df['Total'] = df['Total'].str.replace('.','').astype(int) 
+    df = df.rename(columns={'Total':'Tourist number'})
+    df['Country'] = df['Country'].str.replace('  ','')
+    df['Country'] = df['Country'].str.replace('China ','China').replace('Corea ', 'Corea').replace('Marruecos ','Marruecos')
+#    df['Tourist number'] = df['Tourist number'].str.replace('\t','')
+    
+    df_sumyear = df.groupby(['Country','Year']).sum()
+    df_meanmonth = df.groupby(['Country','Month']).mean()
+    
+#    tmpyear = tmpyear.loc[['Reino Unido','Alemania' , 'Francia', 'China','Japón','Corea'], :].T
+    tmpyear = df_sumyear.unstack().dropna()
+    tmpyear = tmpyear.sort_values(('Tourist number', '2019'),ascending = False)
+    tmpyear = tmpyear.loc[['Marruecos','Argentina', 'China','Japón','Corea','México'], ('Tourist number','2016'):].T
+    tmpyear.plot(kind = 'bar')
+
+    tmpmonth = df_meanmonth.unstack()
+    tmpmonth = tmpyear.loc[['Marruecos','Argentina', 'China','Japón','Corea','México'], :].T
+
+#    tmpmonth = tmpmonth.dropna().T
+
+
+    return tmpmonth
     
 spaintourism()
-

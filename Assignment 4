@@ -1,28 +1,41 @@
 Assignment 4 - Applied Plotting, Charting & Data Representation in Python (Coursera)
 
-Project Title:
+Project Title: China - an emerging tourism market in Spain
 
 State the region and the domain category that your data sets are about:
-  Spain
-  Hotel Industry and Tourism
+  Region: Spain
+  Domain category: Tourism Industry
 
 Create a research question about the domain category and region that you identified:
+  The assignment I did is related to my PhD thesis. The topic of my PhD thesis is the characteristics and potential of China as an emerging tourism market in Spain. This assignment will be a small part of my thesis. 
+  My research objects are mainly tourists who travel to Spain. I selected 6 countries that ranked 17th to 22nd in the number of tourists in Spain in 2019, which are Morocco, Argentina, China, Japan, Korea and Mexico. These six countries are considered to be emerging tourism markets. The data was their visitor numbers from 2015 to 2019. The data comes from National Statistics Institute of Spain. The late data is March 2020.
+  The main research question in this assignment is to find out the characteristics and changing trends of the tourism market of these 6 countries.
 
 
 Provide at least two links to publicly accessible datasets. These could be links to files such as CSV or Excel files, or links to websites which might have data in tabular form, such as Wikipedia pages:
   Instituto Nacional de Estadíastica: Estadística de movimientos turísticos en frontera. Frontur
-  Número de turistas según país de residencia:
+  Número de turistas según país de residencia (Number of tourists by country of residence):
   https://www.ine.es/dyngs/INEbase/es/categoria.htm?c=Estadistica_P&cid=1254735576863
-  Resultados detallados mensuales:
+  Resultados detallados mensuales (Detailed monthly results):
   https://www.ine.es/jaxiT3/Tabla.htm?t=13884
   
 Image:
 
+
 Discussion:
-
-
+  The first figure mainly reflects the annual changes in the number of tourists from these six countries. It can be seen that the data of China, South Korea, Japan and Mexico were rising. I used a line to show the changes in the Chinese market, mainly because my paper focuses on the Chinese market. It can be seen that the number of Chinese tourists has risen rapidly.
+  Unfortunately, the data is only until March 2020, otherwise it would be interesting to explore the impact of the coronavirus on tourists based on the data of year 2020.
+  
+  The second graph shows the changes in the number of visitors each month. We know that Spain is a very seasonal tourism destination for people in Europe. The peak season is summer, people in Europe come to Spain for the sunshine and beaches. The main focus here is the seasonality of tourists in these six emerging markets. We can see that for Asian tourists (China, South Korea, Japan) and American tourists (Mexico, Argentina), they don't mind traveling in the off-season. For Asian tourists, this is because the main purpose of travel in Spain is cultural attractions, rather than sunshine and beaches as their main purpose of travel.
+  Suggestions are always welcome. Thank you
 
 Code:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+%matplotlib notebook
 
 import pandas as pd
 import numpy as np
@@ -48,23 +61,41 @@ def spaintourism():
     
     df_sumyear = df.groupby(['Country','Year']).sum()
     df_meanmonth = df.groupby(['Country','Month']).mean()
-    
-    
+
+    plt.style.use('seaborn')
+    plt.style.use('seaborn-paper')
     tmpyear = df_sumyear.unstack().dropna()
     tmpyear = tmpyear.sort_values(('Tourist number', '2019'),ascending = False)
     tmpyear = tmpyear.loc[['Marruecos','Argentina', 'China','Japón','Corea','México'], ('Tourist number','2016'):].T
     tmpyear= tmpyear.rename(columns={'Marruecos':'Morocco','Japón':'Japan','Corea':'Korea','México':'Mexico'}) #Country name translate
     ax1 = tmpyear.plot(kind = 'bar')
-    labels = ['2015','2016','2017','2018','2019']
-#    ax1.xticks(labels = labels, rotation='vertical')
-    ax1.set_xticklabels(labels, rotation = 40)
-#    plt.title('Harder option')
-#    plt.ylabel('abc')
+    labels = ['2016','2017','2018','2019','2020(Until March)']
+    ax1.set_xticklabels(labels, rotation = 0)
+#    ax1.set_yticklabels(ax1.get_yticks(),rotation = 10,ha='right')
+    ax1.set_title('Number of annual tourists from six emerging market countries in Spain')
+    ax1.set_ylabel('Tourist number')
+    ax1.set_xlabel('Year')
+#    ax1.xaxis.set_label_coords(1.05, -0.025)
+    ax1.plot(ax1.get_xticks()[0:4], tmpyear['China'][0:4], '-o',color = 'r',alpha = 0.7)
+    plt.tight_layout()
+
 
     tmpmonth = df_meanmonth.unstack()
     tmpmonth = tmpmonth.loc[['Marruecos','Argentina', 'China','Japón','Corea','México'], :].T
     tmpmonth= tmpmonth.rename(columns={'Marruecos':'Morocco','Japón':'Japan','Corea':'Korea','México':'Mexico'}) #Country name translate
-    tmpmonth.plot()
+    tmpmonth = tmpmonth.reset_index(level=0, drop=True)
+    ax2 = tmpmonth.plot()
+    month = ['Jan.','Feb.','Mar.','Apr.','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.']
+    ax2.set_xticks(range(0,12,1))
+    ax2.set_xticklabels(month, rotation = 0)
+    ax2.set_title('Number of monthly tourists from six emerging market countries in Spain \n (4-year average from 2015 to 2019)')
+    ax2.set_ylabel('Tourist number')
+    ax2.set_xlabel('Month')
+    n = [0,1,3,4,5]
+    for l in n:
+        ax2.lines[l].set_alpha(0.5)
+    plt.tight_layout()
+    
 
 #17-22
     
